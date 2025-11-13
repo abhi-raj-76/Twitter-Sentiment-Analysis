@@ -139,3 +139,56 @@ print(" Train/test split completed.")
 print(f"Training size: {X_train.shape}, Testing size: {X_test.shape}")
 
 print("\n Data cleaning, feature engineering, and preparation completed successfully!")
+
+# ---------------------------------------------------------
+# STEP 12: Machine Learning Model (Random Forest / SVM)
+# ---------------------------------------------------------
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Reload cleaned dataset (optional, if running separately)
+df = pd.read_csv('twitter_training_cleaned.csv')
+
+# Define features and target
+X = df[['text_length', 'word_count']]
+y = df['sentiment_encoded']
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# ---------------------------------------------------------
+# MODEL 1: Random Forest Classifier
+# ---------------------------------------------------------
+print("\n Training Random Forest Classifier...")
+rf_model = RandomForestClassifier(
+    n_estimators=200, 
+    random_state=42,
+    max_depth=10,
+    n_jobs=-1
+)
+rf_model.fit(X_train, y_train)
+rf_preds = rf_model.predict(X_test)
+
+# Evaluate Random Forest
+print("\n🔹 Random Forest Results:")
+print("Accuracy:", accuracy_score(y_test, rf_preds))
+print("\nClassification Report:\n", classification_report(y_test, rf_preds))
+print("Confusion Matrix:\n", confusion_matrix(y_test, rf_preds))
+
+# ---------------------------------------------------------
+# MODEL 2: Support Vector Machine (SVM)
+# ---------------------------------------------------------
+print("\n Training SVM Classifier...")
+svm_model = SVC(kernel='rbf', C=1.0, random_state=42)
+svm_model.fit(X_train, y_train)
+svm_preds = svm_model.predict(X_test)
+
+# Evaluate SVM
+print("\n🔹 SVM Results:")
+print("Accuracy:", accuracy_score(y_test, svm_preds))
+print("\nClassification Report:\n", classification_report(y_test, svm_preds))
+print("Confusion Matrix:\n", confusion_matrix(y_test, svm_preds))
